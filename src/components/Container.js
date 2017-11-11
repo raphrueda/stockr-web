@@ -16,12 +16,20 @@ class Container extends Component {
     this.state.balance = 0;
     this.state.portfolio = {};
 
+    //Default to yesterday's date, as a quickfix for interacting with Alphavantage's api (timezones)
+    let today = new Date();
+    today.setDate(today.getDate() - 1);
+    this.state.date = this.formatDate(today)
+
     // Function binds
     this.onAddFunds = this.onAddFunds.bind(this);
     this.onWithFunds = this.onWithFunds.bind(this);
     this.handleTransaction = this.handleTransaction.bind(this);
   }
 
+  /*
+    Handles the propagated deposit/add event from the Balance component
+  */
   onAddFunds(amount) {
     if (parseFloat(amount) < 0) {
       alert("Please enter in a positive amount.");
@@ -33,6 +41,9 @@ class Container extends Component {
     }
   }
 
+  /*
+    Handles the propagated withdrawl event from the Balance component
+  */
   onWithFunds(amount) {
     if (parseFloat(amount) < 0) {
       alert("Please enter in a positive amount.");
@@ -46,6 +57,11 @@ class Container extends Component {
     }
   }
 
+  /*
+    Handles transactions propagated up from the PortfolioEntry and StockEntry components
+    Light validation on values, e.g. over-withdrawling, over-selling, etc.
+    Updates state to propagate changes back to components
+  */
   handleTransaction(type, symbol, quantity, price) {
     if (type === 'b') {
 
@@ -84,15 +100,18 @@ class Container extends Component {
     }
   }
 
+  /*
+    Converts date to format suitable for Alphavantage API
+  */
   formatDate(date) {
     let formattedDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
     return formattedDate;
   }
 
   componentDidMount() {
-    this.setState({
-      date : this.formatDate(new Date("2017-11-10")),
-    });
+
+
+
   }
 
   render(){
@@ -100,14 +119,14 @@ class Container extends Component {
       <div className="container-fluid">
         <Header />
         <div className="row module-row">
-          <div className="col-md-8 offset-md-2 module-wrapper">
+          <div className="col-sm-12 col-lg-7 offset-lg-2 module-wrapper">
             <div className="row">
-              <div className="col-md-4 left-modules">
+              <div className="col-sm-12 col-lg-4 left-modules">
                 <Balance balance={this.state.balance} addHandle={this.onAddFunds} withHandle={this.onWithFunds}/>
                 <Portfolio date={this.state.date} transactionHandler={this.handleTransaction} portfolio={this.state.portfolio}/>
               </div>
-              <div className="col-md-8 right-modules">
-                <StockList date={this.state.date} transactionHandler={this.handleTransaction}/>
+              <div className="col-sm-12 col-lg-8 right-modules">
+                <StockList date={this.state.date} transactionHandler={this.handleTransaction} date = {this.state.date}/>
               </div>
             </div>
           </div>
@@ -117,6 +136,7 @@ class Container extends Component {
   }
 }
 
+//TODO: Prop validation if theres time to spare
 Container.propTypes = {
 
 }

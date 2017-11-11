@@ -15,6 +15,9 @@ class PortfolioEntry extends Component {
     this.handleSell = this.handleSell.bind(this);
   }
 
+  /*
+    Handler for selling stocks
+  */
   handleSell(e) {
     e.preventDefault();
     let quantity = this.refs["quanPort-"+this.props.symbol].value;
@@ -31,6 +34,9 @@ class PortfolioEntry extends Component {
     }
   }
 
+  /*
+    Call to Alphavantage for stock prices
+  */
   fetchPrice() {
     let url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + this.props.symbol + "&apikey=" + avKey;
     let date = this.props.date;
@@ -58,6 +64,9 @@ class PortfolioEntry extends Component {
       })
   }
 
+  /*
+    Called when API call initally fails
+  */
   reloadEntry() {
     this.fetchPrice();
   }
@@ -66,14 +75,13 @@ class PortfolioEntry extends Component {
     this.fetchPrice();
   }
 
-
   render(){
     if (this.state.requestFailed) return (
       <div key={this.props.symbol}>
         <div className="card-header" role="tab">
           <div className="row">
 
-            <div className="col-sm-2">
+            <div className="col-sm-3">
               <h6 className="mb-0">{this.props.symbol}</h6>
             </div>
 
@@ -85,8 +93,8 @@ class PortfolioEntry extends Component {
               <h6 className="mb-0">{"Load failed"}</h6>
             </div>
 
-            <div className="col-sm-3">
-              <button type="button" className="btn .btn-warning" onClick={this.reloadEntry}>Retry</button>
+            <div className="col-sm-2">
+              <button type="button" className="btn btn-warning btn-sm" onClick={this.reloadEntry}>Retry</button>
             </div>
 
           </div>
@@ -123,7 +131,7 @@ class PortfolioEntry extends Component {
             </div>
 
             <div className="col-sm-3">
-              <button type="button" className="btn btn-primary" data-toggle="collapse" href={"#"+this.props.symbol + "-port"} aria-expanded="true" aria-controls={this.props.symbol + "-port"}>Expand</button>
+              <button type="button" className="btn btn-primary btn-sm" data-toggle="collapse" href={"#"+this.props.symbol + "-port"} aria-expanded="true" aria-controls={this.props.symbol + "-port"}>Expand</button>
             </div>
 
           </div>
@@ -134,7 +142,7 @@ class PortfolioEntry extends Component {
               <div className="form-group mx-sm-3">
                 <input type="number" min="0" step="1" className="form-control" ref={"quanPort-"+this.props.symbol} placeholder="Quantity" />
               </div>
-              <button type="submit" className="btn btn-primary" onClick={this.handleSell}>SELL</button>
+              <button type="submit" className="btn btn-primary btn-sm" onClick={this.handleSell}>SELL</button>
             </form>
           </div>
         </div>
@@ -143,6 +151,7 @@ class PortfolioEntry extends Component {
   }
 }
 
+//TODO: Prop validation if theres time to spare
 PortfolioEntry.propTypes = {
 
 }

@@ -4,14 +4,11 @@ import PortfolioEntry from './PortfolioEntry';
 import PropTypes from 'prop-types';
 import './style/Portfolio.css';
 
-const avKey = "6ILEM2PUZ7E46HYA";
-
 class Portfolio extends Component {
   constructor(props){
     super(props);
 
     this.state = {};
-    this.state.position = 0;
     this.state.portfolio = {};
 
     // Function binds
@@ -23,6 +20,9 @@ class Portfolio extends Component {
     this.renderPortfolioHeader = this.renderPortfolioHeader.bind(this);
   }
 
+  /*
+    Propagates stock selling event to parent, Container from child, PortfolioEntry
+  */
   handleSell(symbol, quantity, price) {
     this.props.transactionHandler('s', symbol, quantity, price);
   }
@@ -32,7 +32,7 @@ class Portfolio extends Component {
       <div className="card-header" role="tab">
         <div className="row header-row">
           <div className="col-md-2">
-            <h6 className="mb-0">{"Symbol"}</h6>
+            <h6 className="mb-0">{"Sym."}</h6>
           </div>
           <div className="col-md-2">
             <h6 className="mb-0">{"Qty."}</h6>
@@ -48,8 +48,10 @@ class Portfolio extends Component {
     )
   }
 
+  /*
+    List of owned stocks
+  */
   renderPortfolioEntries() {
-    console.log(this);
     return Object.keys(this.props.portfolio).map((sym) =>
       <PortfolioEntry
         key={sym}
@@ -60,6 +62,10 @@ class Portfolio extends Component {
     )
   }
 
+  /*
+    Somewhat hacky way of tracking the owned stock position
+    NOTE See writeup for reflection/evaluation
+  */
   getPortfolioPosition(){
     let total = 0;
     Object.keys(this.props.portfolio).forEach((sym) => {
@@ -73,6 +79,10 @@ class Portfolio extends Component {
     )
   }
 
+  /*
+    Renders the portfolio position (total stock worth),
+    stocks owned and controls to sell them
+  */
   render() {
     return(
       <div className="card portfolio-card">
@@ -91,6 +101,7 @@ class Portfolio extends Component {
   }
 }
 
+//TODO: Prop validation if theres time to spare
 Portfolio.propTypes = {
 
 }

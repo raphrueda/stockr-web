@@ -20,10 +20,23 @@ class StockEntry extends Component {
     this.handleBuy = this.handleBuy.bind(this);
   }
 
-  reloadEntry() {
-    this.fetchStockData();
+  handleBuy(e) {
+    e.preventDefault();
+    let quantity = this.refs["quantity-"+this.props.symbol].value;
+    let price = this.state.stockData["4. close"];
+    if (quantity === "") {
+      return;
+    } else if (quantity % 1 !== 0) {
+      alert("Non-integer detected");
+      return;
+    } else {
+      this.props.buyHandler(this.props.symbol, quantity, price);
+    }
   }
 
+  /*
+    Call to Alphavantage for stock prices
+  */
   fetchStockData() {
     let url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + this.props.symbol + "&apikey=" + avKey;
     let date = this.props.date;
@@ -55,18 +68,11 @@ class StockEntry extends Component {
       })
   }
 
-  handleBuy(e) {
-    e.preventDefault();
-    let quantity = this.refs["quantity-"+this.props.symbol].value;
-    let price = this.state.stockData["4. close"];
-    if (quantity === "") {
-      return;
-    } else if (quantity % 1 !== 0) {
-      alert("Non-integer detected");
-      return;
-    } else {
-      this.props.buyHandler(this.props.symbol, quantity, price);
-    }
+  /*
+    Called when API call initally fails
+  */
+  reloadEntry() {
+    this.fetchStockData();
   }
 
   componentDidMount() {
@@ -98,7 +104,7 @@ class StockEntry extends Component {
               <h6 className="mb-0">{this.state.stockData["5. volume"]}</h6>
             </div>
             <div className="col-md-2">
-              <button type="button" className="btn btn-primary" data-toggle="collapse" href={"#"+this.props.symbol} aria-expanded="true" aria-controls={this.props.symbol}>Expand</button>
+              <button type="button" className="btn btn-primary btn-sm" data-toggle="collapse" href={"#"+this.props.symbol} aria-expanded="true" aria-controls={this.props.symbol}>Expand</button>
             </div>
           </div>
         </div>
@@ -108,7 +114,7 @@ class StockEntry extends Component {
               <div className="form-group mx-sm-3">
                 <input type="number" min="0" className="form-control" ref={"quantity-"+this.props.symbol} placeholder="Quantity" />
               </div>
-              <button type="submit" className="btn btn-primary" onClick={this.handleBuy}>BUY</button>
+              <button type="submit" className="btn btn-primary btn-sm" onClick={this.handleBuy}>BUY</button>
             </form>
           </div>
         </div>
@@ -117,6 +123,7 @@ class StockEntry extends Component {
   }
 }
 
+//TODO: Prop validation if theres time to spare
 StockEntry.propTypes = {
 
 }

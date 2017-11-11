@@ -1,13 +1,7 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import './style/Header.css';
 
 class Header extends Component {
-  constructor(props){
-    super(props);
-    // Function binds
-  }
-
   render(){
     return(
       <nav className="navbar navbar-expand-lg navbar-light">
@@ -15,10 +9,6 @@ class Header extends Component {
       </nav>
     )
   }
-}
-
-Header.propTypes = {
-
 }
 
 export default Header;

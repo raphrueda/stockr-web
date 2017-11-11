@@ -5,6 +5,8 @@ import StockEntry from './StockEntry';
 
 import './style/StockList.css';
 
+// TODO: Find an api for listing nasdaq companies
+// and use instead of the following file.
 const nasdaqList = require('./static/nasdaq-list').NasdaqListCompact;
 
 class StockList extends Component {
@@ -18,10 +20,6 @@ class StockList extends Component {
     this.handleBuy = this.handleBuy.bind(this);
   }
 
-  formatDate(date) {
-    let formattedDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-    return formattedDate;
-  }
 
   handleBuy(symbol, quantity, price) {
     this.props.transactionHandler('b', symbol, quantity, price);
@@ -30,24 +28,26 @@ class StockList extends Component {
   componentDidMount() {
     //NOTE: This would be replaced with an actual api call to a live list of companies
     this.setState({
-      date: this.formatDate(new Date("2017-11-10")),
       symbolList : nasdaqList
     });
   }
 
   renderStockEntries () {
-    if (this.state.symbolList && this.state.date) {
+    if (this.state.symbolList) {
       return Object.keys(this.state.symbolList).map((sym) =>
         <StockEntry
           key={sym}
           symbol={sym}
           fname={this.state.symbolList[sym]}
-          date={this.state.date}
+          date={this.props.date}
           buyHandler={this.handleBuy}/>
       )
     }
   }
 
+  /*
+    Renders the list of stocks (compact list)
+  */
   render(){
     return(
       <div className="card stock-card">
@@ -80,6 +80,7 @@ class StockList extends Component {
   }
 }
 
+//TODO: Prop validation if theres time to spare
 StockList.propTypes = {
 
 }
