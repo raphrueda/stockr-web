@@ -1,0 +1,24 @@
+body {
+  background-color: white;
+}
+
+.container-fluid {
+  margin: 0;
+  padding: 0;
+}
+
+.module-row {
+  margin-top: 2rem;
+}
+
+.module-wrapper .left-modules>div{
+  margin-bottom: 2rem;
+}
+
+.module-wrapper .left-modules:lastchild {
+  margin-bottom: 0;
+}
+
+.module-wrapper .right-modules {
+  /*background-color: lightgreen;*/
+}

@@ -1,0 +1,11 @@
+.card.stock-card {
+  box-shadow: 2px 2px 15px #888;
+}
+
+.card.stock-entry {
+  border: none;
+}
+
+.card-title.stock-title {
+  margin-bottom: 0;
+}

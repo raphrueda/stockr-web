@@ -1,0 +1,15 @@
+.card.balance-card {
+  box-shadow: 2px 2px 15px #888;
+}
+
+.balance-form {
+  margin-top: 1rem;
+}
+
+.balance-form .balance-btns {
+  text-align: right;
+}
+
+.balance-form .balance-btns button{
+  margin: 0 .5rem;
+}

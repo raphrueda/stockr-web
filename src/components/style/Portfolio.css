@@ -1,0 +1,7 @@
+.card.portfolio-card {
+  box-shadow: 2px 2px 15px #888;
+}
+
+.card.portfolio-entry {
+  border: none;
+}
