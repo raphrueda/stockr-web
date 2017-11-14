@@ -17,14 +17,14 @@ class Container extends Component {
     this.state.portfolio = {};
 
     //Default to yesterday's date, as a quickfix for interacting with Alphavantage's api (timezones)
-    let today = new Date();
-    today.setDate(today.getDate() - 1);
-    this.state.date = this.formatDate(today)
+    let today = new Date('2017-11-8');
+    this.state.date = this.formatDate(today);
 
     // Function binds
     this.onAddFunds = this.onAddFunds.bind(this);
     this.onWithFunds = this.onWithFunds.bind(this);
     this.handleTransaction = this.handleTransaction.bind(this);
+    this.handleDate = this.handleDate.bind(this);
   }
 
   /*
@@ -37,6 +37,8 @@ class Container extends Component {
       let newBalance = this.state.balance + parseFloat(amount);
       this.setState({
         balance : newBalance
+      }, () => {
+        localStorage.setItem('state', JSON.stringify(this.state));
       });
     }
   }
@@ -53,6 +55,8 @@ class Container extends Component {
       let newBalance = this.state.balance - parseFloat(amount);
       this.setState({
         balance : newBalance
+      }, () => {
+        localStorage.setItem('state', JSON.stringify(this.state));
       });
     }
   }
@@ -81,6 +85,8 @@ class Container extends Component {
         this.setState({
           balance : newBalance,
           portfolio : newPortfolio
+        }, () => {
+          localStorage.setItem('state', JSON.stringify(this.state));
         });
       }
     } else {
@@ -95,6 +101,8 @@ class Container extends Component {
         this.setState({
           balance : newBalance,
           portfolio : newPortfolio
+        }, () => {
+          localStorage.setItem('state', JSON.stringify(this.state));
         });
       }
     }
@@ -104,14 +112,41 @@ class Container extends Component {
     Converts date to format suitable for Alphavantage API
   */
   formatDate(date) {
-    let formattedDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    if (month < 10) month = '0' + month;
+    if (day < 10) day = '0' + day;
+    let formattedDate =
+      date.getFullYear()
+      + '-'
+      + month
+      + '-'
+      + day;
     return formattedDate;
   }
 
+  handleDate(days) {
+    let newDay = new Date(this.state.date);
+    newDay.setDate(newDay.getDate() + days);
+    if (days > 0 && newDay.getDay() === 6) {
+      newDay.setDate(newDay.getDate() + 2);
+    } else if (days < 0 && newDay.getDay() === 0) {
+      newDay.setDate(newDay.getDate() - 2);
+    }
+    this.setState({
+      date : this.formatDate(newDay)
+    }, () => {
+        this.forceUpdate()
+    });
+  }
+
   componentDidMount() {
-
-
-
+    const cachedState = localStorage.getItem('state');
+    if (cachedState) {
+      let cachedObj = JSON.parse(cachedState);
+      // Object.keys(cachedObj.portfolio).forEach((sym) => delete cachedObj.portfolio[sym].price);
+      this.setState(cachedObj);
+    }
   }
 
   render(){
@@ -126,7 +161,7 @@ class Container extends Component {
                 <Portfolio date={this.state.date} transactionHandler={this.handleTransaction} portfolio={this.state.portfolio}/>
               </div>
               <div className="col-sm-12 col-lg-8 right-modules">
-                <StockList date={this.state.date} transactionHandler={this.handleTransaction} date = {this.state.date}/>
+                <StockList date={this.state.date} transactionHandler={this.handleTransaction} dateHandler={this.handleDate} date={this.state.date}/>
               </div>
             </div>
           </div>

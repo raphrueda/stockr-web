@@ -52,8 +52,10 @@ class PortfolioEntry extends Component {
         if (data["Time Series (Daily)"][date] === undefined) {
           throw Error("Network request failed");
         }
+        let price = parseFloat(data["Time Series (Daily)"][date]["4. close"]);
+        this.props.priceChangeHandler(this.props.symbol, price);
         this.setState({
-          pricePer: parseFloat(data["Time Series (Daily)"][date]["4. close"]),
+          pricePer: price,
           requestFailed: false
         });
       })
@@ -75,8 +77,22 @@ class PortfolioEntry extends Component {
     this.fetchPrice();
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.date != nextProps.date) {
+      delete this.state.pricePer;
+      this.reloadEntry();
+    }
+  }
+
   render(){
-    if (this.state.requestFailed) return (
+    if (this.state.requestFailed) {
+      this.reloadEntry();
+      return <p className="mb-0">Failed...</p>
+    }
+    if (!this.state.pricePer) {
+      return <p className="mb-0">Loading...</p>
+    }
+    return(
       <div key={this.props.symbol}>
         <div className="card-header" role="tab">
           <div className="row">
@@ -85,41 +101,8 @@ class PortfolioEntry extends Component {
               <h6 className="mb-0">{this.props.symbol}</h6>
             </div>
 
-            <div className="col-sm-2">
+            <div className="col-sm-3">
               <h6 className="mb-0">{this.props.quantity}</h6>
-            </div>
-
-            <div className="col">
-              <h6 className="mb-0">{"Load failed"}</h6>
-            </div>
-
-            <div className="col-sm-2">
-              <button type="button" className="btn btn-warning btn-sm" onClick={this.reloadEntry}>Retry</button>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    )
-    return(
-      <div key={this.props.symbol}>
-        <div className="card-header" role="tab">
-          <div className="row">
-
-            <div className="col-sm-2">
-              <h6 className="mb-0">{this.props.symbol}</h6>
-            </div>
-
-            <div className="col-sm-2">
-              <h6 className="mb-0">{this.props.quantity}</h6>
-            </div>
-
-            <div className="col-sm-2">
-              <h6 className="mb-0">{
-                (this.state.pricePer) ?
-                  "$" + (this.state.pricePer).toLocaleString(undefined, {minimumFractionDigits: 2})
-                  : "Loading..."
-              }</h6>
             </div>
 
             <div className="col-sm-3">

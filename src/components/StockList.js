@@ -18,6 +18,8 @@ class StockList extends Component {
     // Function binds
     this.renderStockEntries = this.renderStockEntries.bind(this);
     this.handleBuy = this.handleBuy.bind(this);
+    this.prevDay = this.prevDay.bind(this);
+    this.nextDay = this.nextDay.bind(this);
   }
 
 
@@ -45,6 +47,14 @@ class StockList extends Component {
     }
   }
 
+  prevDay() {
+    this.props.dateHandler(-1);
+  }
+
+  nextDay() {
+    this.props.dateHandler(1);
+  }
+
   /*
     Renders the list of stocks (compact list)
   */
@@ -53,6 +63,11 @@ class StockList extends Component {
       <div className="card stock-card">
         <div className="card-body">
           <h4 className="card-title stock-title">Stock List</h4>
+          <h5 className="card-subtitle text-muted list-date">
+            <button className="btn btn-sm" onClick={this.prevDay}>&laquo;</button>
+            {this.props.date}
+            <button className="btn btn-sm" onClick={this.nextDay}>&raquo;</button>
+          </h5>
         </div>
         <div className="card stock-entry">
           <div id="stock-accordion" role="tablist">

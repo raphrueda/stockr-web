@@ -8,16 +8,20 @@ const ini = require('ini');
 // const conf = ini.parse(fs.readFileSync('../config.ini', 'utf-8'));  //TODO: find out why this is not working
 // const avKey = conf.alphavantage.token;
 
+const MAX_CALLS = 2;
+
 const avKey = "6ILEM2PUZ7E46HYA";
 
 class StockEntry extends Component {
   constructor(props){
     super(props);
 
+    this.calls = MAX_CALLS;
     this.state = {};
     // Function binds
     this.reloadEntry = this.reloadEntry.bind(this);
     this.handleBuy = this.handleBuy.bind(this);
+    this.fetchStockData = this.fetchStockData.bind(this);
   }
 
   handleBuy(e) {
@@ -52,6 +56,7 @@ class StockEntry extends Component {
         if (data["Time Series (Daily)"][date] === undefined) {
           throw Error("Network request failed");
         }
+        this.calls = MAX_CALLS;
         this.setState({
           stockData: data["Time Series (Daily)"][date],
           requestFailed: false
@@ -72,17 +77,44 @@ class StockEntry extends Component {
     Called when API call initally fails
   */
   reloadEntry() {
-    this.fetchStockData();
+    if (this.calls > 0) {
+      this.calls --;
+      this.fetchStockData();
+    }
   }
 
   componentDidMount() {
     this.fetchStockData();
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.date != nextProps.date) {
+      delete this.state.stockData;
+      this.reloadEntry();
+    }
+  }
+
   render(){
+    if (this.calls == 0) {
+      return(
+        <div className="card-header" role="tab">
+          <div className="row">
+            <div className="col-md-2">
+              <h6 className="mb-0">{this.props.symbol}</h6>
+            </div>
+            <div className="col-md-8">
+              <h6 className="mb-0">{"Fail limit reached."}</h6>
+            </div>
+            <div className="col-md-2">
+              <button type="button" className="btn btn-danger btn-sm" onClick={this.fetchStockData}>Retry</button>
+            </div>
+          </div>
+        </div>
+      )
+    }
     if (this.state.requestFailed) {
       this.reloadEntry();
-      return <p className="mb-0">Loading...</p>
+      return <p className="mb-0">Failed...</p>
     }
     if (!this.state.stockData) {
       return <p className="mb-0">Loading...</p>

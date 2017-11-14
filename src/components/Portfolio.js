@@ -18,6 +18,7 @@ class Portfolio extends Component {
     this.renderPortfolioEntries = this.renderPortfolioEntries.bind(this);
     this.renderPortfolioHeader = this.renderPortfolioHeader.bind(this);
     this.renderPortfolioHeader = this.renderPortfolioHeader.bind(this);
+    this.entryPriceChange = this.entryPriceChange.bind(this);
   }
 
   /*
@@ -31,14 +32,11 @@ class Portfolio extends Component {
     return (
       <div className="card-header" role="tab">
         <div className="row header-row">
-          <div className="col-md-2">
-            <h6 className="mb-0">{"Sym."}</h6>
+          <div className="col-md-3">
+            <h6 className="mb-0">{"Symbol"}</h6>
           </div>
-          <div className="col-md-2">
+          <div className="col-md-3">
             <h6 className="mb-0">{"Qty."}</h6>
-          </div>
-          <div className="col-2">
-            <h6 className="mb-0">{"Value"}</h6>
           </div>
           <div className="col">
             <h6 className="mb-0">{"Total"}</h6>
@@ -58,7 +56,8 @@ class Portfolio extends Component {
         date={this.props.date}
         symbol={sym}
         quantity={this.props.portfolio[sym].quantity}
-        sellHandler={this.handleSell}/>
+        sellHandler={this.handleSell}
+        priceChangeHandler={this.entryPriceChange}/>
     )
   }
 
@@ -77,6 +76,11 @@ class Portfolio extends Component {
           "$" + total.toLocaleString(undefined, {minimumFractionDigits: 2})
       }</h5>
     )
+  }
+
+  entryPriceChange(symbol, newPrice){
+    this.props.portfolio[symbol].price = newPrice;
+    this.forceUpdate();
   }
 
   /*
